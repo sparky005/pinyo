@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pinyo/src/post.dart';
@@ -87,7 +88,17 @@ class _MyHomePageState extends State<MyHomePage> {
         "tags": "python text_classification"
       }
     ]""";
+
+  Future<List<Post>> _getPosts(String token) async {
+    final postsUrl = 'https://api.pinboard.in/v1/posts/all?auth_token=$token&format=json';
+    final postsRes = await http.get(postsUrl);
+    if (postsRes.statusCode == 200) {
+      return parseAllPosts(postsRes.body);
+    }
+  }
+
   final posts = parseAllPosts(jsonListOfPosts);
+  final token = "sparky_005:3E0DC4EC2FF41897ED27";
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -102,9 +113,26 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: ListView(
-        children: posts.map((item) => _buildItem(item)).toList(),
-      )
+      body: FutureBuilder<List<Post>>(
+          future: _getPosts(token),
+          builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return _buildList(context, snapshot);
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+    );
+  }
+
+  Widget _buildList(BuildContext context, AsyncSnapshot snapshot) {
+    List<Post> posts = snapshot.data;
+    return ListView.builder(
+      itemCount: posts.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _buildItem(posts[index]);
+      },
     );
   }
 
@@ -132,8 +160,6 @@ class _MyHomePageState extends State<MyHomePage> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIos: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white
           );
           throw UnimplementedError;
         }

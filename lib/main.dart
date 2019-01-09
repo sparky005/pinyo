@@ -97,6 +97,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<List<Post>> _getTaggedPosts(String token, String tag) async {
+    // get all posts matching a single tag
+    final postsUrl = 'https://api.pinboard.in/v1/posts/all?auth_token=$token&format=json&tag=$tag';
+    final postsRes = await http.get(postsUrl);
+    if (postsRes.statusCode == 200) {
+      return parseAllPosts(postsRes.body);
+    }
+  }
+
   final posts = parseAllPosts(jsonListOfPosts);
   final token = "sparky_005:3E0DC4EC2FF41897ED27";
   @override

@@ -23,7 +23,7 @@ class PinyoBloc {
 
   Stream<UnmodifiableListView<Post>> get posts => _postsSubject.stream;
 
-  // behavior subject is just a stream that
+  // behavior subject is just a streamcontroller that
   // will always display some initial data
   final _postsSubject = BehaviorSubject<UnmodifiableListView<Post>>();
 

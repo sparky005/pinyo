@@ -1,12 +1,25 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pinyo/src/pinyo_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pinyo/src/post.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  final pinyo_bloc  = PinyoBloc();
+  runApp(MyApp(bloc: pinyo_bloc));
+}
 
 class MyApp extends StatelessWidget {
+  final PinyoBloc bloc;
+
+  MyApp({
+    Key key,
+    this.bloc,
+  }) : super(key: key);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -15,13 +28,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Pinyo'),
+      home: MyHomePage(title: 'Pinyo', bloc: bloc),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  final PinyoBloc bloc;
+  MyHomePage({Key key, this.title, this.bloc}) : super(key: key);
 
   final String title;
 
@@ -89,25 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     ]""";
 
-  Future<List<Post>> _getPosts(String token) async {
-    final postsUrl = 'https://api.pinboard.in/v1/posts/all?auth_token=$token&format=json';
-    final postsRes = await http.get(postsUrl);
-    if (postsRes.statusCode == 200) {
-      return parseAllPosts(postsRes.body);
-    }
-  }
-
-  Future<List<Post>> _getTaggedPosts(String token, String tag) async {
-    // get all posts matching a single tag
-    final postsUrl = 'https://api.pinboard.in/v1/posts/all?auth_token=$token&format=json&tag=$tag';
-    final postsRes = await http.get(postsUrl);
-    if (postsRes.statusCode == 200) {
-      return parseAllPosts(postsRes.body);
-    }
-  }
 
   final posts = parseAllPosts(jsonListOfPosts);
-  final token = "sparky_005:3E0DC4EC2FF41897ED27";
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -122,16 +119,34 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: FutureBuilder<List<Post>>(
-          future: _getPosts(token),
-          builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return _buildList(context, snapshot);
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+      body: StreamBuilder<UnmodifiableListView<Post>>(
+        stream: widget.bloc.posts,
+        initialData: UnmodifiableListView<Post>([]),
+        builder: (context, snapshot) => _buildList(context, snapshot),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        items: [
+          BottomNavigationBarItem(
+            title: Text('All'),
+            icon: Icon(Icons.announcement),
+          ),
+          BottomNavigationBarItem(
+            title: Text('Python'),
+            icon: Icon(Icons.computer),
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            // this "adds" the enum to the stream
+            // listener in the bloc handles change
+            widget.bloc.postsType.add(PostsType.all);
+          } else {
+            // same here
+            widget.bloc.postsType.add(PostsType.python);
+          }
+        },
+      ),
     );
   }
 

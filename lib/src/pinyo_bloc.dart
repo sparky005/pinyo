@@ -49,15 +49,19 @@ class PinyoBloc {
   Future<Null> _updatePosts(PostsType type) async {
     var posts;
     if (type == PostsType.all) {
-      posts = await _getPosts(token);
+      posts = await _getPosts(token, {'tag': 'books'});
     } else {
       posts = await _getTaggedPosts(token, 'python');
     }
     _posts = posts;
   }
 
-  Future<List<Post>> _getPosts(String token) async {
-    final postsUrl = 'https://api.pinboard.in/v1/posts/all?auth_token=$token&format=json';
+  Future<List<Post>> _getPosts(String token, Map<String, String> queryParams) async {
+    queryParams['auth_token'] = token;
+    queryParams['format'] = 'json';
+    final postsUrl = Uri.https(
+        'api.pinboard.in', '/v1/posts/all', queryParams);
+    print(postsUrl);
     final postsRes = await http.get(postsUrl);
     if (postsRes.statusCode == 200) {
       return parseAllPosts(postsRes.body);

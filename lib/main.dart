@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinyo/src/pinyo_bloc.dart';
+import 'package:pinyo/src/tag_map.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pinyo/src/post.dart';
 
@@ -125,32 +126,53 @@ class _MyHomePageState extends State<MyHomePage> {
         initialData: UnmodifiableListView<Post>([]),
         builder: (context, snapshot) => _buildList(context, snapshot),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        items: [
-          BottomNavigationBarItem(
-            title: Text('All'),
-            icon: Icon(Icons.announcement),
-          ),
-          BottomNavigationBarItem(
-            title: Text('Python'),
-            icon: Icon(Icons.computer),
-          ),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            // this "adds" the enum to the stream
-            // listener in the bloc handles change
-            widget.bloc.postsType.add(PostsType.all);
-          } else {
-            // same here
-            widget.bloc.postsType.add(PostsType.python);
-          }
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                showModalBottomSheet(context: context,
+                builder: (BuildContext context) {
+                  return StreamBuilder<UnmodifiableListView<String>>(
+                    stream: widget.bloc.tags,
+                    initialData: UnmodifiableListView<String>([]),
+                    builder: (context, snapshot) =>
+                        _buildTagList(context, snapshot),
+                  );
+                });
+              }
+            ),
+          ],
+        )
+    )
+      //bottomNavigationBar: BottomNavigationBar(
+      //  currentIndex: _currentIndex,
+      //  items: [
+      //    BottomNavigationBarItem(
+      //      title: Text('All'),
+      //      icon: Icon(Icons.announcement),
+      //    ),
+      //    BottomNavigationBarItem(
+      //      title: Text('Python'),
+      //      icon: Icon(Icons.computer),
+      //    ),
+      //  ],
+      //  onTap: (index) {
+      //    if (index == 0) {
+      //      // this "adds" the enum to the stream
+      //      // listener in the bloc handles change
+      //      widget.bloc.postsType.add(PostsType.all);
+      //    } else {
+      //      // same here
+      //      widget.bloc.postsType.add(PostsType.python);
+      //    setState(() {
+      //      _currentIndex = index;
+      //    });
+      //  },
+      //),
     );
   }
 
@@ -161,6 +183,28 @@ class _MyHomePageState extends State<MyHomePage> {
       itemBuilder: (BuildContext context, int index) {
         return _buildItem(posts[index]);
       },
+    );
+  }
+  Widget _buildTagList(BuildContext context, AsyncSnapshot snapshot) {
+    List<String> tags = snapshot.data;
+    return ListView.builder(
+      itemCount: tags.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _buildTagItem(tags[index]);
+      },
+    );
+  }
+  Widget _buildTagItem(String tag) {
+    return Padding(
+      key: Key(tag),
+      padding: const EdgeInsets.all(16.0),
+      child: ListTile(
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(tag ?? '[null]'),
+          ),
+            onTap: () { print("tapped tag"); }
+      ),
     );
   }
 
@@ -194,4 +238,5 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
 }

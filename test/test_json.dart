@@ -228,5 +228,4 @@ void main() {
     expect(parsedTags.tags.keys.first, "2018");
     expect(parsedTags.tags.keys.last, "zipline");
   });
-
 }

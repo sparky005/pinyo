@@ -51,6 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: () => widget.bloc.currentTag.add(""),
+          ),
+        ],
       ),
       body: StreamBuilder<UnmodifiableListView<Post>>(
         stream: widget.bloc.posts,

@@ -50,7 +50,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title:
+            StreamBuilder<String>(
+              stream: widget.bloc.selectedTag,
+              initialData: "",
+              builder: (context, snapshot) {
+                if (snapshot.data != "") {
+                  return Text(snapshot.data);
+                }
+                return Text(widget.title);
+              }
+            ),
         actions: [
           IconButton(
             icon: Icon(Icons.clear),
@@ -76,8 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   return StreamBuilder<UnmodifiableListView<String>>(
                     stream: widget.bloc.tags,
                     initialData: UnmodifiableListView<String>([]),
-                    builder: (context, snapshot) =>
-                        _buildTagList(context, snapshot),
+                    builder: (context, snapshot) => _buildTagList(context, snapshot),
                   );
                 });
               }

@@ -11,7 +11,7 @@ class PinyoBloc {
   final token = "sparky_005:3E0DC4EC2FF41897ED27";
 
   // create streamcontroller
-  final _currentTagController = StreamController<String>();
+  final _currentTagController = StreamController<String>.broadcast();
 
   var _posts = <Post>[];
   var _tags = <String>[];
@@ -21,6 +21,7 @@ class PinyoBloc {
 
   Stream<UnmodifiableListView<Post>> get posts => _postsSubject.stream;
   Stream<UnmodifiableListView<String>> get tags => _tagsSubject.stream;
+  Stream<String> get selectedTag => _currentTagController.stream;
 
   // behavior subject is just a streamcontroller that
   // will always display some initial data

@@ -28,6 +28,9 @@ class PinyoBloc {
   final _postsSubject = BehaviorSubject<UnmodifiableListView<Post>>();
   final _tagsSubject = BehaviorSubject<UnmodifiableListView<String>>();
 
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
+  final _isLoadingSubject = BehaviorSubject<bool>(seedValue: false);
+
   // constructor
   PinyoBloc() {
     _updatePostsListView();
@@ -38,10 +41,11 @@ class PinyoBloc {
     });
   }
 
-  _updatePostsListView({String tag = ""}) {
-    _updatePosts(tag).then((_) {
-      _postsSubject.add(UnmodifiableListView(_posts));
-    });
+  _updatePostsListView({String tag = ""}) async {
+    _isLoadingSubject.add(true);
+    await _updatePosts(tag);
+    _postsSubject.add(UnmodifiableListView(_posts));
+    _isLoadingSubject.add(false);
   }
 
   Future<Null> _updatePosts(tag) async {

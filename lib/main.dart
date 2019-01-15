@@ -1,16 +1,14 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinyo/src/pinyo_bloc.dart';
-import 'package:pinyo/src/tag_map.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pinyo/src/post.dart';
 
 void main() {
-  final pinyo_bloc  = PinyoBloc();
-  runApp(MyApp(bloc: pinyo_bloc));
+  final pinyoBloc  = PinyoBloc();
+  runApp(MyApp(bloc: pinyoBloc));
 }
 
 class MyApp extends StatelessWidget {
@@ -50,6 +48,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: StreamBuilder(
+          stream: widget.bloc.isLoading,
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data) {
+              return LinearProgressIndicator();
+            }
+            else {
+              return Container();
+            }
+          }
+        ),
         title:
             StreamBuilder<String>(
               stream: widget.bloc.selectedTag,

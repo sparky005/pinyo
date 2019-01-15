@@ -48,17 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: StreamBuilder(
-          stream: widget.bloc.isLoading,
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data) {
-              return LinearProgressIndicator();
-            }
-            else {
-              return Container();
-            }
-          }
-        ),
+        bottom: PreferredSize(
+          preferredSize: Size(double.infinity, 1.0),
+          child: ProgressBar(widget.bloc.isLoading),
+          ),
         title:
             StreamBuilder<String>(
               stream: widget.bloc.selectedTag,
@@ -172,4 +165,23 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+}
+class ProgressBar extends StatelessWidget {
+  final Stream<bool> _isLoading;
+  ProgressBar(this._isLoading);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: _isLoading,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data) {
+          return LinearProgressIndicator();
+        }
+        else {
+          return Container();
+        }
+      }
+    );
+  }
 }

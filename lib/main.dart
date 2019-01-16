@@ -101,12 +101,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildList(BuildContext context, AsyncSnapshot snapshot) {
     List<Post> posts = snapshot.data;
-    return ListView.builder(
-      itemCount: posts.length,
-      itemBuilder: (BuildContext context, int index) {
-        return _buildItem(posts[index]);
-      },
+    return RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: ListView.builder(
+        itemCount: posts.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _buildItem(posts[index]);
+        },
+      ),
     );
+  }
+
+  Future<Null> _handleRefresh() {
+    // this works, but feels wrong
+    // it also resets the tag on a pull to refresh
+    return widget.bloc.updatePostsListView(tag: "");
   }
   Widget _buildTagList(BuildContext context, AsyncSnapshot snapshot) {
     List<String> tags = snapshot.data;
@@ -127,7 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text(tag ?? '[null]'),
           ),
             onTap: () {
-              print("tapped tag");
               widget.bloc.currentTag.add(tag);
             }
       ),

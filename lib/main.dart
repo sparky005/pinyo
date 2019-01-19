@@ -115,8 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Null> _handleRefresh() {
     // this works, but feels wrong
     // it also resets the tag on a pull to refresh
-    return widget.bloc.updatePostsListView(tag: "");
+    widget.bloc.currentTag.add("");
+    return Future.value();
   }
+
   Widget _buildTagList(BuildContext context, AsyncSnapshot snapshot) {
     List<String> tags = snapshot.data;
     return ListView.builder(

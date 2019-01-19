@@ -33,15 +33,15 @@ class PinyoBloc {
 
   // constructor
   PinyoBloc() {
-    updatePostsListView();
+    _updatePostsListView();
     _updateTagsListView();
 
     _currentTagController.stream.listen((currentTag) {
-        updatePostsListView(tag: currentTag);
+        _updatePostsListView(tag: currentTag);
     });
   }
 
-  Future<Null> updatePostsListView({String tag = ""}) async {
+  _updatePostsListView({String tag = ""}) async {
     _isLoadingSubject.add(true);
     await _updatePosts(tag);
     _postsSubject.add(UnmodifiableListView(_posts));

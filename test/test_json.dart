@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pinyo/src/post.dart';
+import 'package:pinyo/src/models/post.dart';
 
 import 'package:pinyo/main.dart';
-import 'package:pinyo/src/tag_map.dart';
+import 'package:pinyo/src/models/tag_map.dart';
 
 void main() {
   test("test parsing a single post", () {

@@ -2,7 +2,7 @@ import 'dart:convert' as json;
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:pinyo/src/serializers.dart';
+import 'package:pinyo/src/utils/serializers.dart';
 
 part 'tag_map.g.dart';
 

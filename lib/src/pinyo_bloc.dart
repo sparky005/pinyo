@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:pinyo/src/post.dart';
+import 'package:pinyo/src/models/post.dart';
 import 'package:http/http.dart' as http;
-import 'package:pinyo/src/tag_map.dart';
+import 'package:pinyo/src/models/tag_map.dart';
 import 'package:rxdart/rxdart.dart';
 
 

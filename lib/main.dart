@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinyo/src/pinyo_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:pinyo/src/post.dart';
+import 'package:pinyo/src/models/post.dart';
 
 void main() {
   final pinyoBloc  = PinyoBloc();

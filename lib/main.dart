@@ -113,9 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Null> _handleRefresh() {
-    // this works, but feels wrong
-    // it also resets the tag on a pull to refresh
-    widget.bloc.currentTag.add("");
+    widget.bloc.refresh.add(true);
     return Future.value();
   }
 

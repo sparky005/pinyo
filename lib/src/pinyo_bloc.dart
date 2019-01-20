@@ -15,9 +15,11 @@ class PinyoBloc {
 
   var _posts = <Post>[];
   var _tags = <String>[];
+  String _currentTag;
 
   // getter for postsType gets me the sink on the stream controller
   Sink<String> get currentTag => _currentTagController.sink;
+  Sink<bool> get refresh => _refreshRequestedSubject.sink;
 
   Stream<UnmodifiableListView<Post>> get posts => _postsSubject.stream;
   Stream<UnmodifiableListView<String>> get tags => _tagsSubject.stream;
@@ -27,6 +29,7 @@ class PinyoBloc {
   // will always display some initial data
   final _postsSubject = BehaviorSubject<UnmodifiableListView<Post>>();
   final _tagsSubject = BehaviorSubject<UnmodifiableListView<String>>();
+  final _refreshRequestedSubject = BehaviorSubject<bool>();
 
   Stream<bool> get isLoading => _isLoadingSubject.stream;
   final _isLoadingSubject = BehaviorSubject<bool>(seedValue: false);
@@ -37,7 +40,14 @@ class PinyoBloc {
     _updateTagsListView();
 
     _currentTagController.stream.listen((currentTag) {
+        _currentTag = currentTag;
         _updatePostsListView(tag: currentTag);
+    });
+    _refreshRequestedSubject.stream.listen((refresh) {
+      if(refresh) {
+        _currentTagController.sink.add(_currentTag);
+      _refreshRequestedSubject.sink.add(false);
+      }
     });
   }
 

@@ -48,3 +48,7 @@ Post parsePost(String jsonStr) {
   Post post = standardSerializers.deserializeWith(Post.serializer, parsed);
   return post;
 }
+
+Map<String, dynamic> toJson(Post post) {
+  return standardSerializers.serializeWith(Post.serializer, post);
+}

@@ -8,31 +8,30 @@ import 'package:rxdart/rxdart.dart';
 
 
 class PinyoBloc {
+  // TODO: remove this hard-coded token when i implement login flow
   final token = "sparky_005:3E0DC4EC2FF41897ED27";
-
-  // create streamcontroller
-  final _currentTagController = StreamController<String>.broadcast();
 
   var _posts = <Post>[];
   var _tags = <String>[];
   String _currentTag;
 
-  // getter for postsType gets me the sink on the stream controller
-  Sink<String> get currentTag => _currentTagController.sink;
-  Sink<bool> get refresh => _refreshRequestedSubject.sink;
-
-  Stream<UnmodifiableListView<Post>> get posts => _postsSubject.stream;
-  Stream<UnmodifiableListView<String>> get tags => _tagsSubject.stream;
-  Stream<String> get selectedTag => _currentTagController.stream;
-
-  // behavior subject is just a streamcontroller that
-  // will always display some initial data
+  // stream controllers
   final _postsSubject = BehaviorSubject<UnmodifiableListView<Post>>();
   final _tagsSubject = BehaviorSubject<UnmodifiableListView<String>>();
   final _refreshRequestedSubject = BehaviorSubject<bool>();
-
-  Stream<bool> get isLoading => _isLoadingSubject.stream;
+  final _currentTagController = StreamController<String>.broadcast();
   final _isLoadingSubject = BehaviorSubject<bool>(seedValue: false);
+
+  // getters for sinks
+  Sink<String> get currentTag => _currentTagController.sink;
+  Sink<bool> get refresh => _refreshRequestedSubject.sink;
+
+  // getters for streams
+  Stream<UnmodifiableListView<Post>> get posts => _postsSubject.stream;
+  Stream<UnmodifiableListView<String>> get tags => _tagsSubject.stream;
+  Stream<String> get selectedTag => _currentTagController.stream;
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
+
 
   // constructor
   PinyoBloc() {
@@ -96,5 +95,15 @@ class PinyoBloc {
     if (res.statusCode == 200) {
       return parseTags(res.body);
     }
+  }
+
+  dispose() {
+    // called when widget is removed from tree
+    // here we close all our streams
+    _currentTagController.close();
+    _isLoadingSubject.close();
+    _postsSubject.close();
+    _refreshRequestedSubject.close();
+    _tagsSubject.close();
   }
 }

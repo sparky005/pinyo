@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pinyo/src/models/post.dart';
-import 'package:pinyo/src/utils/serializers.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBProvider {
@@ -41,7 +40,6 @@ class DBProvider {
   }
 
   Future<int> savePost(Post post) async {
-    print("Saving post");
     final db = await database;
     // returns the id
     return db.insert("Posts", toJson(post));
@@ -54,11 +52,9 @@ class DBProvider {
   }
 
   getPostByHash(String hash) async {
-    print("getting");
     final db = await database;
     var res = await db.query("Posts", where: "hash = ?", whereArgs: [hash]);
-    print("got it");
-    return res.isNotEmpty ? parsePostFromJson(res.toString()) : Null;
+    return res.isNotEmpty ? parsePost(res.first) : Null;
   }
 
   Future<List<Post>> getAllPosts() async {
@@ -71,14 +67,13 @@ class DBProvider {
 
   Future<List<Post>> getPostsByTag(String tag) async {
     final db = await database;
-    var res = await db.query("Posts", where: "tag = ?", whereArgs: [tag]);
+    var res = await db.query("Posts", where: "tags LIKE '%$tag%'");
     List<Post> list =
         res.isNotEmpty ? res.map((post) => parsePost(post)).toList() : [];
     return list;
   }
 
   Future<int> checkAndInsert(Post post) async {
-    print("Checking and inserting...");
     if(await getPostByHash(post.hash) == Null) {
       return savePost(post);
     }

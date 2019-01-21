@@ -40,10 +40,8 @@ class PinyoBloc {
     _updateTagsListView();
 
     _currentTagController.stream.listen((currentTag) {
-        // TODO: have this fetch all the posts by tag from the database
-        // tag selectiong should currently be broken
-        _currentTag = currentTag;
-        _fetchAndUpdatePosts(tag: currentTag);
+      _currentTag = currentTag;
+      _updatePostView(tag: currentTag);
     });
 
     _refreshRequestedSubject.stream.listen((refresh) {
@@ -64,17 +62,17 @@ class PinyoBloc {
     posts.forEach((post) => DBProvider.db.checkAndInsert(post));
   }
 
-  _fetchAndUpdatePosts({String tag = ""}) async {
+  _fetchAndUpdatePosts() async {
     _isLoadingSubject.add(true);
-    await _updatePosts(tag);
+    await _updatePosts();
     _updateDatabase(_posts);
     _postsSubject.add(UnmodifiableListView(_posts));
     _isLoadingSubject.add(false);
   }
 
-  Future<Null> _updatePosts(tag) async {
+  Future<Null> _updatePosts() async {
     var posts;
-     posts = await _fetchPosts(token, {'tag': tag});
+    posts = await _fetchPosts(token, {'tag': ""});
     _posts = posts;
   }
 
@@ -120,5 +118,10 @@ class PinyoBloc {
     _postsSubject.close();
     _refreshRequestedSubject.close();
     _tagsSubject.close();
+  }
+
+  void _updatePostView({String tag = ""}) async {
+    _posts = await DBProvider.db.getPostsByTag(tag);
+    _postsSubject.add(UnmodifiableListView<Post>(_posts));
   }
 }

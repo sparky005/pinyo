@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinyo/src/pinyo_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pinyo/src/models/post.dart';
@@ -149,6 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildItem(BuildContext context, Post post) {
+    // TODO: wrap this in column, display tags below listtile
     return Padding(
       key: Key(post.hash),
       padding: const EdgeInsets.all(16.0),
@@ -158,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Text(post.description ?? '[null]'),
         ),
         subtitle: Text(post.extended),
+        trailing: post.shared == "no" ? Icon(Icons.lock) : null,
         onTap: () async {
           // await the future!
           // needed because canLaunch returns a future

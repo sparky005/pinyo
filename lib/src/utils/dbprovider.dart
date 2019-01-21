@@ -74,12 +74,23 @@ class DBProvider {
   }
 
   Future<int> checkAndInsert(Post post) async {
-    if(await getPostByHash(post.hash) == Null) {
+    final curPost = await getPostByHash(post.hash);
+    if(curPost == Null) {
       return savePost(post);
+    } else if (post.meta != curPost.meta) {
+      updatePost(post);
     }
     return 0;
   }
+
+  Future<int> updatePost(Post newPost) async {
+    print('updating post ${newPost.hash}, ${newPost.id}');
+    final db = await database;
+    var res = await db.update("Posts", toJson(newPost),
+      where: "hash = ?", whereArgs: [newPost.hash]);
+    return res;
+  }
   
-  // TODO: Add update an delete methods
+  // TODO: Add delete method
 
 }

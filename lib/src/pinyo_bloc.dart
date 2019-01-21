@@ -14,7 +14,6 @@ class PinyoBloc {
 
   var _posts = <Post>[];
   var _tags = <String>[];
-  String _currentTag;
 
   // stream controllers
   final _postsSubject = BehaviorSubject<UnmodifiableListView<Post>>();
@@ -40,7 +39,6 @@ class PinyoBloc {
     _updateTagsListView();
 
     _currentTagController.stream.listen((currentTag) {
-      _currentTag = currentTag;
       _updatePostView(tag: currentTag);
     });
 

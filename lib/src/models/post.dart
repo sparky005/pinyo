@@ -12,6 +12,9 @@ abstract class Post implements Built<Post, PostBuilder> {
   String get href;
 
   @nullable
+  int get id;
+
+  @nullable
   String get description;
 
   @nullable
@@ -43,7 +46,11 @@ List<Post> parseAllPosts(String jsonStr) {
       .toList();
 }
 
-Post parsePost(String jsonStr) {
+Post parsePost(Map<String, dynamic> post) {
+  return standardSerializers.deserializeWith(Post.serializer, post);
+}
+
+Post parsePostFromJson(String jsonStr) {
   final parsed = json.jsonDecode(jsonStr);
   Post post = standardSerializers.deserializeWith(Post.serializer, parsed);
   return post;

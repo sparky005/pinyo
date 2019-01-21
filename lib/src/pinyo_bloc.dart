@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:pinyo/src/models/post.dart';
 import 'package:http/http.dart' as http;
 import 'package:pinyo/src/models/tag_map.dart';
+import 'package:pinyo/src/utils/dbprovider.dart';
 import 'package:rxdart/rxdart.dart';
 
 
@@ -35,35 +36,49 @@ class PinyoBloc {
 
   // constructor
   PinyoBloc() {
-    _updatePostsListView();
+    _getAllStoredPosts();
     _updateTagsListView();
 
     _currentTagController.stream.listen((currentTag) {
+        // TODO: have this fetch all the posts by tag from the database
+        // tag selectiong should currently be broken
         _currentTag = currentTag;
-        _updatePostsListView(tag: currentTag);
+        _fetchAndUpdatePosts(tag: currentTag);
     });
+
     _refreshRequestedSubject.stream.listen((refresh) {
       if(refresh) {
-        _currentTagController.sink.add(_currentTag);
-      _refreshRequestedSubject.sink.add(false);
+        _fetchAndUpdatePosts();
+        //_currentTagController.sink.add(_currentTag);
+        _refreshRequestedSubject.sink.add(false);
       }
     });
   }
 
-  _updatePostsListView({String tag = ""}) async {
+  _getAllStoredPosts() async {
+    _posts = await DBProvider.db.getAllPosts();
+    _postsSubject.add(UnmodifiableListView<Post>(_posts));
+  }
+
+  _updateDatabase(List<Post> posts) {
+    posts.forEach((post) => DBProvider.db.checkAndInsert(post));
+  }
+
+  _fetchAndUpdatePosts({String tag = ""}) async {
     _isLoadingSubject.add(true);
     await _updatePosts(tag);
+    _updateDatabase(_posts);
     _postsSubject.add(UnmodifiableListView(_posts));
     _isLoadingSubject.add(false);
   }
 
   Future<Null> _updatePosts(tag) async {
     var posts;
-     posts = await _getPosts(token, {'tag': tag});
+     posts = await _fetchPosts(token, {'tag': tag});
     _posts = posts;
   }
 
-  Future<List<Post>> _getPosts(String token, Map<String, String> queryParams) async {
+  Future<List<Post>> _fetchPosts(String token, Map<String, String> queryParams) async {
     queryParams['auth_token'] = token;
     queryParams['format'] = 'json';
     final postsUrl = Uri.https(

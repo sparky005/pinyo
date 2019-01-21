@@ -35,6 +35,12 @@ class _$PostSerializer implements StructuredSerializer<Post> {
       'tags',
       serializers.serialize(object.tags, specifiedType: const FullType(String)),
     ];
+    if (object.id != null) {
+      result
+        ..add('id')
+        ..add(serializers.serialize(object.id,
+            specifiedType: const FullType(int)));
+    }
     if (object.description != null) {
       result
         ..add('description')
@@ -65,6 +71,10 @@ class _$PostSerializer implements StructuredSerializer<Post> {
         case 'href':
           result.href = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'id':
+          result.id = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
         case 'description':
           result.description = serializers.deserialize(value,
@@ -109,6 +119,8 @@ class _$Post extends Post {
   @override
   final String href;
   @override
+  final int id;
+  @override
   final String description;
   @override
   final String extended;
@@ -130,6 +142,7 @@ class _$Post extends Post {
 
   _$Post._(
       {this.href,
+      this.id,
       this.description,
       this.extended,
       this.meta,
@@ -174,6 +187,7 @@ class _$Post extends Post {
     if (identical(other, this)) return true;
     return other is Post &&
         href == other.href &&
+        id == other.id &&
         description == other.description &&
         extended == other.extended &&
         meta == other.meta &&
@@ -193,7 +207,7 @@ class _$Post extends Post {
                     $jc(
                         $jc(
                             $jc(
-                                $jc($jc(0, href.hashCode),
+                                $jc($jc($jc(0, href.hashCode), id.hashCode),
                                     description.hashCode),
                                 extended.hashCode),
                             meta.hashCode),
@@ -208,6 +222,7 @@ class _$Post extends Post {
   String toString() {
     return (newBuiltValueToStringHelper('Post')
           ..add('href', href)
+          ..add('id', id)
           ..add('description', description)
           ..add('extended', extended)
           ..add('meta', meta)
@@ -226,6 +241,10 @@ class PostBuilder implements Builder<Post, PostBuilder> {
   String _href;
   String get href => _$this._href;
   set href(String href) => _$this._href = href;
+
+  int _id;
+  int get id => _$this._id;
+  set id(int id) => _$this._id = id;
 
   String _description;
   String get description => _$this._description;
@@ -264,6 +283,7 @@ class PostBuilder implements Builder<Post, PostBuilder> {
   PostBuilder get _$this {
     if (_$v != null) {
       _href = _$v.href;
+      _id = _$v.id;
       _description = _$v.description;
       _extended = _$v.extended;
       _meta = _$v.meta;
@@ -295,6 +315,7 @@ class PostBuilder implements Builder<Post, PostBuilder> {
     final _$result = _$v ??
         new _$Post._(
             href: href,
+            id: id,
             description: description,
             extended: extended,
             meta: meta,

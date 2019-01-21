@@ -18,7 +18,7 @@ void main() {
       "toread": "no",
       "tags": "python text_classification"
     }""";
-    expect(parsePost(post).hash, "4dfa01632a13761d468b093bb6a77a3d");
+    expect(parsePostFromJson(post).hash, "4dfa01632a13761d468b093bb6a77a3d");
   });
 
   test("parse another post, just to be safe", () {
@@ -33,7 +33,7 @@ void main() {
     "toread": "yes",
     "tags": ""
   }""";
-    expect(parsePost(post).hash, "dcbbbb0fd691f66e669f746d0a1cf587");
+    expect(parsePostFromJson(post).hash, "dcbbbb0fd691f66e669f746d0a1cf587");
   });
 
   test("parse a list of posts", () {

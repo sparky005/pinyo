@@ -111,6 +111,7 @@ class PinyoBloc {
   dispose() {
     // called when widget is removed from tree
     // here we close all our streams
+    // this actually gets called from the widget
     _currentTagController.close();
     _isLoadingSubject.close();
     _postsSubject.close();

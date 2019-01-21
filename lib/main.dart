@@ -45,6 +45,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   @override
+  void dispose() {
+    widget.bloc.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -106,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView.builder(
         itemCount: posts.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildItem(posts[index]);
+          return _buildItem(context, posts[index]);
         },
       ),
     );
@@ -142,9 +148,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildItem(Post post) {
+  Widget _buildItem(BuildContext context, Post post) {
     return Padding(
-      key: Key(post.description),
+      key: Key(post.hash),
       padding: const EdgeInsets.all(16.0),
       child: ListTile(
         title: Padding(
@@ -161,13 +167,9 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         },
         onLongPress: () {
-          Fluttertoast.showToast(
-              msg: "Not yet implemented.",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIos: 1,
-          );
-          throw UnimplementedError;
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text('Not yet implementd'),
+          ));
         }
       ),
     );

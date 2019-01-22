@@ -21,7 +21,7 @@ class DBProvider {
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "posts.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {
+    return await openDatabase(path, version: 2, onOpen: (db) {
       }, onCreate: (Database db, int version) async {
         await db.execute("CREATE TABLE Posts ("
                 "id INTEGER PRIMARY KEY,"
@@ -35,6 +35,18 @@ class DBProvider {
                 "toread TEXT,"
                 "tags TEXT"
                 ")");
+        await db.execute("CREATE TABLE Tags("
+                 "id INTEGER PRIMARY KEY,"
+                 "tag TEXT,"
+                 "tagCount INT"
+                 ")");
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        await db.execute("CREATE TABLE Tags("
+                 "id INTEGER PRIMARY KEY,"
+                 "tag TEXT,"
+                 "tagCount INT"
+                 ")");
       }
     );
   }
@@ -43,6 +55,11 @@ class DBProvider {
     final db = await database;
     // returns the id
     return db.insert("Posts", toJson(post));
+  }
+
+  Future<int> saveTag(String tag) async {
+    final db = await database;
+    return db.insert("Tags", {'tag': tag});
   }
 
   Future<Post> getPostById(int id) async {
@@ -54,6 +71,12 @@ class DBProvider {
   getPostByHash(String hash) async {
     final db = await database;
     var res = await db.query("Posts", where: "hash = ?", whereArgs: [hash]);
+    return res.isNotEmpty ? parsePost(res.first) : Null;
+  }
+
+  getTagByName(String tag) async {
+    final db = await database;
+    var res = await db.query("Tags", where: "tag = ?", whereArgs: [tag]);
     return res.isNotEmpty ? parsePost(res.first) : Null;
   }
 
@@ -83,6 +106,14 @@ class DBProvider {
     return 0;
   }
 
+  Future<int> checkAndInsertTag(String tag) async {
+    final curTag = await getTagByName(tag);
+    if(curTag == Null) {
+      return saveTag(tag);
+    }
+    return 0;
+  }
+
   Future<int> updatePost(Post newPost) async {
     print('updating post ${newPost.hash}, ${newPost.id}');
     final db = await database;
@@ -90,7 +121,6 @@ class DBProvider {
       where: "hash = ?", whereArgs: [newPost.hash]);
     return res;
   }
-  
   // TODO: Add delete method
 
 }

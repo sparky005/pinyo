@@ -56,15 +56,18 @@ class PinyoBloc {
     _postsSubject.add(UnmodifiableListView<Post>(_posts));
   }
 
-  _updateDatabase(List<Post> posts) {
+  _updateDatabase(List<Post> posts, List<String> tags) {
     posts.forEach((post) => DBProvider.db.checkAndInsert(post));
+    tags.forEach((tag) => DBProvider.db.checkAndInsertTag(tag));
   }
 
   _fetchAndUpdatePosts() async {
     _isLoadingSubject.add(true);
     await _updatePosts();
-    _updateDatabase(_posts);
+    await _updateTags();
+    _updateDatabase(_posts, _tags);
     _postsSubject.add(UnmodifiableListView(_posts));
+    _tagsSubject.add(UnmodifiableListView(_tags));
     _isLoadingSubject.add(false);
   }
 
@@ -93,11 +96,12 @@ class PinyoBloc {
 
   Future<Null> _updateTags() async {
     var tags;
-    tags = await _getTags(token);
+    tags = await _fetchTags(token);
+    // TODO: actually keep the tag map, not just the keys
     _tags = tags.tags.keys.toList();
   }
 
-  Future<TagMap> _getTags(String token) async {
+  Future<TagMap> _fetchTags(String token) async {
     final queryParams = {'auth_token': token, 'format': 'json'};
     final url = Uri.https(
         'api.pinboard.in', '/v1/tags/get', queryParams

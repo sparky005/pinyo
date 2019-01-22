@@ -77,7 +77,7 @@ class DBProvider {
   getTagByName(String tag) async {
     final db = await database;
     var res = await db.query("Tags", where: "tag = ?", whereArgs: [tag]);
-    return res.isNotEmpty ? parsePost(res.first) : Null;
+    return res.isNotEmpty ? res.first['tag'] : Null;
   }
 
   Future<List<Post>> getAllPosts() async {
@@ -116,7 +116,7 @@ class DBProvider {
 
   Future<int> checkAndInsertTag(String tag) async {
     final curTag = await getTagByName(tag);
-    if(curTag == Null) {
+    if(curTag != tag) {
       return saveTag(tag);
     }
     return 0;

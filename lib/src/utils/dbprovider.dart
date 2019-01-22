@@ -88,6 +88,14 @@ class DBProvider {
     return list;
   }
 
+  Future<List<String>> getAllTags() async {
+    final db = await database;
+    var res = await db.query("Tags");
+    List<String> list =
+        res.isNotEmpty ? res.toList().map((i) => i['tag'].toString()).toList() : [];
+    return list;
+  }
+
   Future<List<Post>> getPostsByTag(String tag) async {
     final db = await database;
     var res = await db.query("Posts", where: "tags LIKE '%$tag%'");
@@ -123,4 +131,6 @@ class DBProvider {
   }
   // TODO: Add delete method
 
+  // TODO: clear posts that are no longer actually in pinboard
+  // will likely have to do this during update
 }

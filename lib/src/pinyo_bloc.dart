@@ -36,7 +36,7 @@ class PinyoBloc {
   // constructor
   PinyoBloc() {
     _getAllStoredPosts();
-    _updateTagsListView();
+    _getAllStoredTags();
 
     _currentTagController.stream.listen((currentTag) {
       _updatePostView(tag: currentTag);
@@ -54,6 +54,11 @@ class PinyoBloc {
   _getAllStoredPosts() async {
     _posts = await DBProvider.db.getAllPosts();
     _postsSubject.add(UnmodifiableListView<Post>(_posts));
+  }
+
+  _getAllStoredTags() async {
+    _tags = await DBProvider.db.getAllTags();
+    _tagsSubject.add(UnmodifiableListView<String>(_tags));
   }
 
   _updateDatabase(List<Post> posts, List<String> tags) {
@@ -86,12 +91,6 @@ class PinyoBloc {
     if (postsRes.statusCode == 200) {
       return parseAllPosts(postsRes.body);
     }
-  }
-
-  _updateTagsListView() {
-    _updateTags().then((_) {
-      _tagsSubject.add(UnmodifiableListView(_tags));
-    });
   }
 
   Future<Null> _updateTags() async {

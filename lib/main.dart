@@ -73,6 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.clear),
             onPressed: () => widget.bloc.currentTag.add(""),
           ),
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () => showSearch(context: context, delegate: MySearchDelegate(bloc: widget.bloc),)
+          ),
         ],
       ),
       body: StreamBuilder<UnmodifiableListView<Post>>(
@@ -169,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         onLongPress: () {
           Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text('Not yet implementd'),
+            content: Text('Not yet implemented'),
           ));
         }
       ),
@@ -195,4 +199,43 @@ class ProgressBar extends StatelessWidget {
       }
     );
   }
+}
+
+
+class MySearchDelegate extends SearchDelegate {
+  final PinyoBloc bloc;
+  MySearchDelegate({Key key, this.bloc}) : super();
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () => query = ''
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () => close(context, null)
+      ,);
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    //bloc.searchQuery.add(query);
+    // this shows the results AFTER the user hits enter
+    return Text('hi');
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // TODO: implement buildSuggestions
+    // this show the suggestions as the user is typing in the search term
+    return Text(query);
+  }
+
 }

@@ -82,7 +82,7 @@ class DBProvider {
 
   Future<List<Post>> getAllPosts() async {
     final db = await database;
-    var res = await db.query("Posts");
+    var res = await db.query("Posts", orderBy: "time DESC");
     List<Post> list =
         res.isNotEmpty ? res.map((post) => parsePost(post)).toList() : [];
     return list;

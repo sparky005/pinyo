@@ -7,7 +7,6 @@ import 'package:pinyo/src/models/tag_map.dart';
 import 'package:pinyo/src/utils/dbprovider.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 class PinyoBloc {
   // TODO: remove this hard-coded token when i implement login flow
   final token = "sparky_005:3E0DC4EC2FF41897ED27";
@@ -32,7 +31,6 @@ class PinyoBloc {
   Stream<String> get selectedTag => _currentTagController.stream;
   Stream<bool> get isLoading => _isLoadingSubject.stream;
 
-
   // constructor
   PinyoBloc() {
     _getAllStoredPosts();
@@ -43,10 +41,21 @@ class PinyoBloc {
     });
 
     _refreshRequestedSubject.stream.listen((refresh) {
-      if(refresh) {
+      if (refresh) {
         _fetchAndUpdatePosts();
         //_currentTagController.sink.add(_currentTag);
         _refreshRequestedSubject.sink.add(false);
+        _removeDeletedPosts();
+      }
+    });
+  }
+
+  _removeDeletedPosts() async {
+    List<Post> storedPosts = await DBProvider.db.getAllPosts();
+    storedPosts.forEach((storedPost) {
+      _posts.map((i) => i.hash);
+      if (!_posts.map((i) => i.hash).contains(storedPost.hash)) {
+        DBProvider.db.deletePostByHash(storedPost.hash);
       }
     });
   }
@@ -82,11 +91,11 @@ class PinyoBloc {
     _posts = posts;
   }
 
-  Future<List<Post>> _fetchPosts(String token, Map<String, String> queryParams) async {
+  Future<List<Post>> _fetchPosts(
+      String token, Map<String, String> queryParams) async {
     queryParams['auth_token'] = token;
     queryParams['format'] = 'json';
-    final postsUrl = Uri.https(
-        'api.pinboard.in', '/v1/posts/all', queryParams);
+    final postsUrl = Uri.https('api.pinboard.in', '/v1/posts/all', queryParams);
     final postsRes = await http.get(postsUrl);
     if (postsRes.statusCode == 200) {
       return parseAllPosts(postsRes.body);
@@ -102,9 +111,7 @@ class PinyoBloc {
 
   Future<TagMap> _fetchTags(String token) async {
     final queryParams = {'auth_token': token, 'format': 'json'};
-    final url = Uri.https(
-        'api.pinboard.in', '/v1/tags/get', queryParams
-    );
+    final url = Uri.https('api.pinboard.in', '/v1/tags/get', queryParams);
     final res = await http.get(url);
     if (res.statusCode == 200) {
       return parseTags(res.body);

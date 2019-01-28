@@ -123,11 +123,14 @@ class DBProvider {
   }
 
   Future<int> updatePost(Post newPost) async {
-    print('updating post ${newPost.hash}, ${newPost.id}');
     final db = await database;
     var res = await db.update("Posts", toJson(newPost),
       where: "hash = ?", whereArgs: [newPost.hash]);
     return res;
+  }
+  Future<void> deletePostByHash(String hash) async {
+    final db = await database;
+    db.delete("Posts", where: "hash = ?", whereArgs: [hash]);
   }
   // TODO: Add delete method
 

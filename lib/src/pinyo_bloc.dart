@@ -53,8 +53,8 @@ class PinyoBloc {
   _removeDeletedPosts() async {
     List<Post> storedPosts = await DBProvider.db.getAllPosts();
     storedPosts.forEach((storedPost) {
-      _posts.map((i) => i.hash);
       if (!_posts.map((i) => i.hash).contains(storedPost.hash)) {
+        print("Found post to delete");
         DBProvider.db.deletePostByHash(storedPost.hash);
       }
     });

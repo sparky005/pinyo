@@ -2,8 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:pinyo/src/pinyo_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:pinyo/src/models/post.dart';
+import 'package:pinyo/src/widgets/postlist.dart';
+import 'package:pinyo/src/widgets/postsearch.dart';
+import 'package:pinyo/src/widgets/progressbar.dart';
 
 void main() {
   final pinyoBloc  = PinyoBloc();
@@ -75,15 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () => showSearch(context: context, delegate: MySearchDelegate(bloc: widget.bloc),)
+            onPressed: () => showSearch(context: context, delegate: PostSearch(bloc: widget.bloc),)
           ),
         ],
       ),
-      body: StreamBuilder<UnmodifiableListView<Post>>(
-        stream: widget.bloc.posts,
-        initialData: UnmodifiableListView<Post>([]),
-        builder: (context, snapshot) => _buildList(context, snapshot),
-      ),
+      body: PostList(bloc: widget.bloc),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -108,23 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildList(BuildContext context, AsyncSnapshot snapshot) {
-    List<Post> posts = snapshot.data;
-    return RefreshIndicator(
-        onRefresh: _handleRefresh,
-        child: ListView.builder(
-        itemCount: posts.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _buildItem(context, posts[index]);
-        },
-      ),
-    );
-  }
 
-  Future<Null> _handleRefresh() {
-    widget.bloc.refresh.add(true);
-    return Future.value();
-  }
 
   Widget _buildTagList(BuildContext context, AsyncSnapshot snapshot) {
     List<String> tags = snapshot.data;
@@ -151,91 +132,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildItem(BuildContext context, Post post) {
-    // TODO: wrap this in column, display tags below listtile
-    return Padding(
-      key: Key(post.hash),
-      padding: const EdgeInsets.all(16.0),
-      child: ListTile(
-        title: Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Text(post.description ?? '[null]'),
-        ),
-        subtitle: Text(post.extended),
-        trailing: post.shared == "no" ? Icon(Icons.lock) : null,
-        onTap: () async {
-          // await the future!
-          // needed because canLaunch returns a future
-          // and "if" statements are syncronous
-          if (await canLaunch(post.href)) {
-            launch(post.href);
-          }
-        },
-        onLongPress: () {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text('Not yet implemented'),
-          ));
-        }
-      ),
-    );
-  }
-
-}
-class ProgressBar extends StatelessWidget {
-  final Stream<bool> _isLoading;
-  ProgressBar(this._isLoading);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _isLoading,
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data) {
-          return LinearProgressIndicator();
-        }
-        else {
-          return Container();
-        }
-      }
-    );
-  }
-}
-
-
-class MySearchDelegate extends SearchDelegate {
-  final PinyoBloc bloc;
-  MySearchDelegate({Key key, this.bloc}) : super();
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () => query = ''
-      ),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_back),
-      onPressed: () => close(context, null)
-      ,);
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    //bloc.searchQuery.add(query);
-    // this shows the results AFTER the user hits enter
-    return Text('hi');
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    // this show the suggestions as the user is typing in the search term
-    return Text(query);
-  }
 
 }

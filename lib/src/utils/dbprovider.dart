@@ -132,8 +132,4 @@ class DBProvider {
     final db = await database;
     db.delete("Posts", where: "hash = ?", whereArgs: [hash]);
   }
-  // TODO: Add delete method
-
-  // TODO: clear posts that are no longer actually in pinboard
-  // will likely have to do this during update
 }

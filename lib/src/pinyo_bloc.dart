@@ -54,7 +54,6 @@ class PinyoBloc {
     List<Post> storedPosts = await DBProvider.db.getAllPosts();
     storedPosts.forEach((storedPost) {
       if (!_posts.map((i) => i.hash).contains(storedPost.hash)) {
-        print("Found post to delete");
         DBProvider.db.deletePostByHash(storedPost.hash);
       }
     });
@@ -96,10 +95,15 @@ class PinyoBloc {
     queryParams['auth_token'] = token;
     queryParams['format'] = 'json';
     final postsUrl = Uri.https('api.pinboard.in', '/v1/posts/all', queryParams);
-    final postsRes = await http.get(postsUrl);
-    if (postsRes.statusCode == 200) {
-      return parseAllPosts(postsRes.body);
+    try {
+      final postsRes = await http.get(postsUrl);
+      if (postsRes.statusCode == 200) {
+        return parseAllPosts(postsRes.body);
+      }
+    } catch (SocketException) {
+      print("couldn't connect");
     }
+    return _posts;
   }
 
   Future<Null> _updateTags() async {
@@ -112,10 +116,18 @@ class PinyoBloc {
   Future<TagMap> _fetchTags(String token) async {
     final queryParams = {'auth_token': token, 'format': 'json'};
     final url = Uri.https('api.pinboard.in', '/v1/tags/get', queryParams);
-    final res = await http.get(url);
-    if (res.statusCode == 200) {
-      return parseTags(res.body);
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        return parseTags(res.body);
+      }
+    } catch (SocketError) {
+      print("couldn't connect");
     }
+    // this is definitely a hack
+    var tags= {};
+    _tags.forEach((i) => { tags[i]: "0"});
+    return parseTags(tags.toString());
   }
 
   dispose() {

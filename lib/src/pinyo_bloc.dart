@@ -45,7 +45,6 @@ class PinyoBloc {
         _fetchAndUpdatePosts();
         //_currentTagController.sink.add(_currentTag);
         _refreshRequestedSubject.sink.add(false);
-        _removeDeletedPosts();
       }
     });
   }
@@ -82,6 +81,7 @@ class PinyoBloc {
     _postsSubject.add(UnmodifiableListView(_posts));
     _tagsSubject.add(UnmodifiableListView(_tags));
     _isLoadingSubject.add(false);
+    await _removeDeletedPosts();
   }
 
   Future<Null> _updatePosts() async {

@@ -130,6 +130,7 @@ class DBProvider {
   }
   Future<void> deletePostByHash(String hash) async {
     final db = await database;
-    db.delete("Posts", where: "hash = ?", whereArgs: [hash]);
+    var res = await db.delete("Posts", where: "hash = ?", whereArgs: [hash]);
+    return res;
   }
 }

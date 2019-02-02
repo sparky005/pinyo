@@ -98,7 +98,7 @@ class DBProvider {
 
   Future<List<Post>> getPostsByTag(String tag) async {
     final db = await database;
-    var res = await db.query("Posts", where: "tags LIKE '%$tag%'");
+    var res = await db.query("Posts", where: "tags LIKE '%$tag%'", orderBy: "time DESC");
     List<Post> list =
         res.isNotEmpty ? res.map((post) => parsePost(post)).toList() : [];
     return list;

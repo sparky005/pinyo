@@ -40,39 +40,39 @@ class PostList extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: _handleRefresh,
       child: ListView.builder(
+        padding: EdgeInsets.all(16.0),
         itemCount: posts.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildItem(context, posts[index]);
+          return _buildItem(context, posts[index], index);
         },
       ),
     );
   }
 
-  Widget _buildItem(BuildContext context, Post post) {
+  Widget _buildItem(BuildContext context, Post post, int index) {
     // TODO: wrap this in column, display tags below listtile
-    return Padding(
-      key: Key(post.hash),
-      padding: const EdgeInsets.all(16.0),
-      child: ListTile(
-          title: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(post.description ?? '[null]'),
-          ),
-          subtitle: Text(post.extended),
-          trailing: post.shared == "no" ? Icon(Icons.lock) : null,
-          onTap: () async {
-            // await the future!
-            // needed because canLaunch returns a future
-            // and "if" statements are syncronous
-            if (await canLaunch(post.href)) {
-              launch(post.href);
-            }
-          },
-          onLongPress: () {
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text('Not yet implemented'),
-            ));
-          }),
+    if (index.isOdd) return Divider();
+
+    return ListTile(
+      title: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Text(post.description ?? '[null]'),
+      ),
+      subtitle: Text(post.extended),
+      trailing: post.shared == "no" ? Icon(Icons.lock) : null,
+      onTap: () async {
+        // await the future!
+        // needed because canLaunch returns a future
+        // and "if" statements are syncronous
+        if (await canLaunch(post.href)) {
+          launch(post.href);
+        }
+      },
+      onLongPress: () {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Not yet implemented'),
+        ));
+      },
     );
   }
 }

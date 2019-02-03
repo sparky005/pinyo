@@ -25,8 +25,7 @@ part 'serializers.g.dart';
 @SerializersFor(const [
   Post,
 ])
-
 Serializers serializers = _$serializers;
 
 Serializers standardSerializers =
-(serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
+    (serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

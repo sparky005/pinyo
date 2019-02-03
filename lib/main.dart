@@ -1,10 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:pinyo/src/pinyo_bloc.dart';
 import 'package:pinyo/src/routes/homepage.dart';
 
 void main() {
-  final pinyoBloc  = PinyoBloc();
+  final pinyoBloc = PinyoBloc();
   runApp(MyApp(bloc: pinyoBloc));
 }
 

@@ -9,10 +9,7 @@ class PostSearch extends SearchDelegate {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () => query = ''
-      ),
+      IconButton(icon: Icon(Icons.clear), onPressed: () => query = ''),
     ];
   }
 
@@ -20,8 +17,8 @@ class PostSearch extends SearchDelegate {
   Widget buildLeading(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.arrow_back),
-      onPressed: () => close(context, null)
-      ,);
+      onPressed: () => close(context, null),
+    );
   }
 
   @override
@@ -33,5 +30,4 @@ class PostSearch extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     return PostList(bloc: bloc, query: query);
   }
-
 }

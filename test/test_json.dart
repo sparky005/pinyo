@@ -94,7 +94,8 @@ void main() {
         "tags": "python text_classification"
       }
     ]""";
-    expect(parseAllPosts(jsonListOfPosts).first.hash, "e0f273cb0dc650390b2d931509504956");
+    expect(parseAllPosts(jsonListOfPosts).first.hash,
+        "e0f273cb0dc650390b2d931509504956");
   });
 
   test("parse tags", () {

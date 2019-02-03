@@ -21,7 +21,6 @@ TagMap parseTags(String jsonStr) {
   // this is just a straight map
   // we don't really need complicated serializers for this
   Map<String, String> map = Map<String, String>.from(parsed);
-  TagMap tags = TagMap((i) => i
-                  ..tags=map);
+  TagMap tags = TagMap((i) => i..tags = map);
   return tags;
 }

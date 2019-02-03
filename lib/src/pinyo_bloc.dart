@@ -125,8 +125,8 @@ class PinyoBloc {
       print("couldn't connect");
     }
     // this is definitely a hack
-    var tags= {};
-    _tags.forEach((i) => { tags[i]: "0"});
+    var tags = {};
+    _tags.forEach((i) => {tags[i]: "0"});
     return parseTags(tags.toString());
   }
 

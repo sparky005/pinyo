@@ -17,7 +17,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   void dispose() {
     widget.bloc.dispose();
@@ -31,18 +30,17 @@ class _MyHomePageState extends State<MyHomePage> {
         bottom: PreferredSize(
           preferredSize: Size(double.infinity, 1.0),
           child: ProgressBar(widget.bloc.isLoading),
-          ),
-        title:
-            StreamBuilder<String>(
-              stream: widget.bloc.selectedTag,
-              initialData: "",
-              builder: (context, snapshot) {
-                if (snapshot.data != "") {
-                  return Text(snapshot.data);
-                }
-                return Text(widget.title);
-              }
-            ),
+        ),
+        title: StreamBuilder<String>(
+          stream: widget.bloc.selectedTag,
+          initialData: "",
+          builder: (context, snapshot) {
+            if (snapshot.data != "") {
+              return Text(snapshot.data);
+            }
+            return Text(widget.title);
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.clear),
@@ -50,7 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () => showSearch(context: context, delegate: PostSearch(bloc: widget.bloc),)
+            onPressed: () => showSearch(
+                  context: context,
+                  delegate: PostSearch(bloc: widget.bloc),
+                ),
           ),
         ],
       ),
@@ -63,23 +64,24 @@ class _MyHomePageState extends State<MyHomePage> {
             IconButton(
               icon: Icon(Icons.menu),
               onPressed: () {
-                showModalBottomSheet(context: context,
-                builder: (BuildContext context) {
-                  return StreamBuilder<UnmodifiableListView<String>>(
-                    stream: widget.bloc.tags,
-                    initialData: UnmodifiableListView<String>([]),
-                    builder: (context, snapshot) => _buildTagList(context, snapshot),
-                  );
-                });
-              }
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return StreamBuilder<UnmodifiableListView<String>>(
+                      stream: widget.bloc.tags,
+                      initialData: UnmodifiableListView<String>([]),
+                      builder: (context, snapshot) =>
+                          _buildTagList(context, snapshot),
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),
-    ),
+      ),
     );
   }
-
-
 
   Widget _buildTagList(BuildContext context, AsyncSnapshot snapshot) {
     List<String> tags = snapshot.data;
@@ -90,21 +92,20 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+
   Widget _buildTagItem(String tag) {
     return Padding(
       key: Key(tag),
       padding: const EdgeInsets.all(16.0),
       child: ListTile(
-          title: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(tag ?? '[null]'),
-          ),
-            onTap: () {
-              widget.bloc.currentTag.add(tag);
-            }
+        title: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(tag ?? '[null]'),
+        ),
+        onTap: () {
+          widget.bloc.currentTag.add(tag);
+        },
       ),
     );
   }
-
-
 }

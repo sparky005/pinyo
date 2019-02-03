@@ -7,15 +7,13 @@ class ProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _isLoading,
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data) {
-          return LinearProgressIndicator();
-        }
-        else {
-          return Container();
-        }
-      }
-    );
+        stream: _isLoading,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data) {
+            return LinearProgressIndicator();
+          } else {
+            return Container();
+          }
+        });
   }
 }

@@ -29,7 +29,10 @@ class PostList extends StatelessWidget {
       if (query == null) {
         posts = snapshot.data;
       } else {
-        posts = snapshot.data.where((a) => a.description.toLowerCase().contains(query.toLowerCase())).toList();
+        posts = snapshot.data.where((a) => (a.description.toLowerCase() +
+                                            a.extended.toLowerCase() +
+                                            a.tags.toLowerCase())
+                    .contains(query.toLowerCase())).toList();
       }
       return RefreshIndicator(
           onRefresh: _handleRefresh,

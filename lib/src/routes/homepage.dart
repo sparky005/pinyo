@@ -86,26 +86,25 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildTagList(BuildContext context, AsyncSnapshot snapshot) {
     List<String> tags = snapshot.data;
     return ListView.builder(
+      padding: EdgeInsets.all(16.0),
       itemCount: tags.length,
       itemBuilder: (BuildContext context, int index) {
-        return _buildTagItem(tags[index]);
+        return _buildTagItem(tags[index], index);
       },
     );
   }
 
-  Widget _buildTagItem(String tag) {
-    return Padding(
-      key: Key(tag),
-      padding: const EdgeInsets.all(16.0),
-      child: ListTile(
-        title: Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Text(tag ?? '[null]'),
-        ),
-        onTap: () {
-          widget.bloc.currentTag.add(tag);
-        },
+  Widget _buildTagItem(String tag, int index) {
+    if (index == 0) return Icon(Icons.menu);
+
+    return ListTile(
+      title: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Text(tag ?? '[null]'),
       ),
+      onTap: () {
+        widget.bloc.currentTag.add(tag);
+      },
     );
   }
 }

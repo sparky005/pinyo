@@ -39,7 +39,8 @@ class PostList extends StatelessWidget {
     }
     return RefreshIndicator(
       onRefresh: _handleRefresh,
-      child: ListView.builder(
+      child: ListView.separated(
+        separatorBuilder: (context, index) => Divider(),
         padding: EdgeInsets.all(16.0),
         itemCount: posts.length,
         itemBuilder: (BuildContext context, int index) {
@@ -51,7 +52,6 @@ class PostList extends StatelessWidget {
 
   Widget _buildItem(BuildContext context, Post post, int index) {
     // TODO: wrap this in column, display tags below listtile
-    if (index.isOdd) return Divider();
 
     return ListTile(
       title: Padding(

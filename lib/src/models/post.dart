@@ -12,6 +12,9 @@ abstract class Post implements Built<Post, PostBuilder> {
   String get href;
 
   @nullable
+  String get url;
+
+  @nullable
   int get id;
 
   @nullable
@@ -20,16 +23,23 @@ abstract class Post implements Built<Post, PostBuilder> {
   @nullable
   String get extended;
 
+  @nullable
   String get meta;
 
+  @nullable
   String get hash;
 
+  @nullable
   String get time;
 
   String get shared;
 
   String get toread;
 
+  @nullable
+  // this is a string, not a list
+  // because the api actually provides (and accepts)
+  // a single string of space-separated tags
   String get tags;
 
   Post._();

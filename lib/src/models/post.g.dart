@@ -20,21 +20,19 @@ class _$PostSerializer implements StructuredSerializer<Post> {
     final result = <Object>[
       'href',
       serializers.serialize(object.href, specifiedType: const FullType(String)),
-      'meta',
-      serializers.serialize(object.meta, specifiedType: const FullType(String)),
-      'hash',
-      serializers.serialize(object.hash, specifiedType: const FullType(String)),
-      'time',
-      serializers.serialize(object.time, specifiedType: const FullType(String)),
       'shared',
       serializers.serialize(object.shared,
           specifiedType: const FullType(String)),
       'toread',
       serializers.serialize(object.toread,
           specifiedType: const FullType(String)),
-      'tags',
-      serializers.serialize(object.tags, specifiedType: const FullType(String)),
     ];
+    if (object.url != null) {
+      result
+        ..add('url')
+        ..add(serializers.serialize(object.url,
+            specifiedType: const FullType(String)));
+    }
     if (object.id != null) {
       result
         ..add('id')
@@ -51,6 +49,30 @@ class _$PostSerializer implements StructuredSerializer<Post> {
       result
         ..add('extended')
         ..add(serializers.serialize(object.extended,
+            specifiedType: const FullType(String)));
+    }
+    if (object.meta != null) {
+      result
+        ..add('meta')
+        ..add(serializers.serialize(object.meta,
+            specifiedType: const FullType(String)));
+    }
+    if (object.hash != null) {
+      result
+        ..add('hash')
+        ..add(serializers.serialize(object.hash,
+            specifiedType: const FullType(String)));
+    }
+    if (object.time != null) {
+      result
+        ..add('time')
+        ..add(serializers.serialize(object.time,
+            specifiedType: const FullType(String)));
+    }
+    if (object.tags != null) {
+      result
+        ..add('tags')
+        ..add(serializers.serialize(object.tags,
             specifiedType: const FullType(String)));
     }
 
@@ -70,6 +92,10 @@ class _$PostSerializer implements StructuredSerializer<Post> {
       switch (key) {
         case 'href':
           result.href = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'url':
+          result.url = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'id':
@@ -119,6 +145,8 @@ class _$Post extends Post {
   @override
   final String href;
   @override
+  final String url;
+  @override
   final int id;
   @override
   final String description;
@@ -142,6 +170,7 @@ class _$Post extends Post {
 
   _$Post._(
       {this.href,
+      this.url,
       this.id,
       this.description,
       this.extended,
@@ -155,23 +184,11 @@ class _$Post extends Post {
     if (href == null) {
       throw new BuiltValueNullFieldError('Post', 'href');
     }
-    if (meta == null) {
-      throw new BuiltValueNullFieldError('Post', 'meta');
-    }
-    if (hash == null) {
-      throw new BuiltValueNullFieldError('Post', 'hash');
-    }
-    if (time == null) {
-      throw new BuiltValueNullFieldError('Post', 'time');
-    }
     if (shared == null) {
       throw new BuiltValueNullFieldError('Post', 'shared');
     }
     if (toread == null) {
       throw new BuiltValueNullFieldError('Post', 'toread');
-    }
-    if (tags == null) {
-      throw new BuiltValueNullFieldError('Post', 'tags');
     }
   }
 
@@ -187,6 +204,7 @@ class _$Post extends Post {
     if (identical(other, this)) return true;
     return other is Post &&
         href == other.href &&
+        url == other.url &&
         id == other.id &&
         description == other.description &&
         extended == other.extended &&
@@ -207,7 +225,11 @@ class _$Post extends Post {
                     $jc(
                         $jc(
                             $jc(
-                                $jc($jc($jc(0, href.hashCode), id.hashCode),
+                                $jc(
+                                    $jc(
+                                        $jc($jc(0, href.hashCode),
+                                            url.hashCode),
+                                        id.hashCode),
                                     description.hashCode),
                                 extended.hashCode),
                             meta.hashCode),
@@ -222,6 +244,7 @@ class _$Post extends Post {
   String toString() {
     return (newBuiltValueToStringHelper('Post')
           ..add('href', href)
+          ..add('url', url)
           ..add('id', id)
           ..add('description', description)
           ..add('extended', extended)
@@ -241,6 +264,10 @@ class PostBuilder implements Builder<Post, PostBuilder> {
   String _href;
   String get href => _$this._href;
   set href(String href) => _$this._href = href;
+
+  String _url;
+  String get url => _$this._url;
+  set url(String url) => _$this._url = url;
 
   int _id;
   int get id => _$this._id;
@@ -283,6 +310,7 @@ class PostBuilder implements Builder<Post, PostBuilder> {
   PostBuilder get _$this {
     if (_$v != null) {
       _href = _$v.href;
+      _url = _$v.url;
       _id = _$v.id;
       _description = _$v.description;
       _extended = _$v.extended;
@@ -315,6 +343,7 @@ class PostBuilder implements Builder<Post, PostBuilder> {
     final _$result = _$v ??
         new _$Post._(
             href: href,
+            url: url,
             id: id,
             description: description,
             extended: extended,

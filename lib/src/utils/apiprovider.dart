@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:pinyo/src/models/post.dart';
 import 'package:pinyo/src/models/tag_map.dart';
+import 'dart:convert' as json;
 
 class PinboardAPI {
 
@@ -21,6 +22,27 @@ class PinboardAPI {
       print("couldn't connect");
     }
     return _posts;
+  }
+
+  Future<int> addPost(String token, Post post) async {
+    Map <String, String> queryParams = {};
+    queryParams['auth_token'] = token;
+    queryParams['format'] = 'json';
+    queryParams.addAll(toJson(post).cast<String, String>());
+    final postsUrl = Uri.https('api.pinboard.in', '/v1/posts/add', queryParams);
+    try {
+      final postsRes = await http.get(postsUrl);
+      if (postsRes.statusCode == 200) {
+        print(postsRes.body);
+        final result = json.jsonDecode(postsRes.body);
+        if (result['result_code'] == 'done') {
+          return 0;
+        }
+      }
+    } catch (SocketException) {
+      print("couldn't connect");
+    }
+    return 1;
   }
 
   Future<TagMap> fetchTags(String token, List<String> _tags) async {

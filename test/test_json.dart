@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinyo/src/models/post.dart';
+import 'package:pinyo/src/utils/apiprovider.dart';
 
 import 'package:pinyo/main.dart';
 import 'package:pinyo/src/models/tag_map.dart';
@@ -228,5 +229,20 @@ void main() {
     final parsedTags = parseTags(tags);
     expect(parsedTags.tags.keys.first, "2018");
     expect(parsedTags.tags.keys.last, "zipline");
+  });
+
+  test("test adding a post", () async {
+    final token = "sparky_005:3E0DC4EC2FF41897ED27";
+    final post = """{
+      "href": "https://google.com",
+      "url": "https://google.com",
+      "description": "Test post",
+      "shared": "yes",
+      "toread": "no",
+      "tags": "test testtag2"
+    }""";
+    final parsedPost = parsePostFromJson(post);
+    final rc = await PinboardAPI.api.addPost(token, parsedPost);
+    expect(rc, 0);
   });
 }

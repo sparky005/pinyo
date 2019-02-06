@@ -29,6 +29,10 @@ class PinboardAPI {
     queryParams['auth_token'] = token;
     queryParams['format'] = 'json';
     queryParams.addAll(toJson(post).cast<String, String>());
+    // the 'add' api expects 'url' instead of 'href'
+    // this is a hack, but it's a simple one
+    // TODO: see if i can handle this in built value
+    queryParams['url'] = queryParams['href'];
     final postsUrl = Uri.https('api.pinboard.in', '/v1/posts/add', queryParams);
     try {
       final postsRes = await http.get(postsUrl);

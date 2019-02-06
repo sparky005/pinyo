@@ -233,14 +233,26 @@ void main() {
 
   test("test adding a post", () async {
     final token = "sparky_005:3E0DC4EC2FF41897ED27";
+   // final post = """{
+   //   "href": "https://google.com",
+   //   "url": "https://google.com",
+   //   "description": "Test post",
+   //   "shared": "yes",
+   //   "toread": "no",
+   //   "tags": "test testtag2"
+   // }""";
     final post = """{
-      "href": "https://google.com",
-      "url": "https://google.com",
-      "description": "Test post",
-      "shared": "yes",
-      "toread": "no",
-      "tags": "test testtag2"
-    }""";
+  "href": "https://www.google.com",
+  "description": "desc",
+  "extended": "",
+  "meta": "9d4d09cf15d8c647d18153890e5731e6",
+  "hash": "8ffdefbdec956b595d257f0aaeefd623",
+  "time": "2019-02-06T02:54:27Z",
+  "shared": "yes",
+  "toread": "no",
+  "tags": "tag1 tag2"
+}
+""";
     final parsedPost = parsePostFromJson(post);
     final rc = await PinboardAPI.api.addPost(token, parsedPost);
     expect(rc, 0);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:collection';
 import 'package:pinyo/src/pinyo_bloc.dart';
+import 'package:pinyo/src/routes/editpage.dart';
 import 'package:pinyo/src/widgets/postlist.dart';
 import 'package:pinyo/src/widgets/postsearch.dart';
 import 'package:pinyo/src/widgets/progressbar.dart';
@@ -80,6 +81,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => EditPage()),
+        );
+      }),
     );
   }
 

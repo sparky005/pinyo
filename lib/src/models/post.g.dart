@@ -20,12 +20,6 @@ class _$PostSerializer implements StructuredSerializer<Post> {
     final result = <Object>[
       'href',
       serializers.serialize(object.href, specifiedType: const FullType(String)),
-      'shared',
-      serializers.serialize(object.shared,
-          specifiedType: const FullType(String)),
-      'toread',
-      serializers.serialize(object.toread,
-          specifiedType: const FullType(String)),
     ];
     if (object.url != null) {
       result
@@ -67,6 +61,18 @@ class _$PostSerializer implements StructuredSerializer<Post> {
       result
         ..add('time')
         ..add(serializers.serialize(object.time,
+            specifiedType: const FullType(String)));
+    }
+    if (object.shared != null) {
+      result
+        ..add('shared')
+        ..add(serializers.serialize(object.shared,
+            specifiedType: const FullType(String)));
+    }
+    if (object.toread != null) {
+      result
+        ..add('toread')
+        ..add(serializers.serialize(object.toread,
             specifiedType: const FullType(String)));
     }
     if (object.tags != null) {
@@ -183,12 +189,6 @@ class _$Post extends Post {
       : super._() {
     if (href == null) {
       throw new BuiltValueNullFieldError('Post', 'href');
-    }
-    if (shared == null) {
-      throw new BuiltValueNullFieldError('Post', 'shared');
-    }
-    if (toread == null) {
-      throw new BuiltValueNullFieldError('Post', 'toread');
     }
   }
 

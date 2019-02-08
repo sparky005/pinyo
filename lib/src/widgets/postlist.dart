@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:pinyo/src/pinyo_bloc.dart';
+import 'package:pinyo/src/routes/editpage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pinyo/src/models/post.dart';
 
@@ -72,6 +73,10 @@ class PostList extends StatelessWidget {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('Not yet implemented'),
         ));
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => EditPage()),
+        // );
       },
     );
   }

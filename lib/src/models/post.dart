@@ -32,8 +32,10 @@ abstract class Post implements Built<Post, PostBuilder> {
   @nullable
   String get time;
 
+  @nullable
   String get shared;
 
+  @nullable
   String get toread;
 
   @nullable

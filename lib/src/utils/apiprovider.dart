@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:pinyo/src/models/post.dart';
 import 'package:pinyo/src/models/tag_map.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert' as json;
 
 class PinboardAPI {
@@ -25,6 +26,9 @@ class PinboardAPI {
   }
 
   Future<int> addPost(String token, Post post) async {
+    if (!await canLaunch(post.href)) {
+      return 2;
+    }
     Map <String, String> queryParams = {};
     queryParams['auth_token'] = token;
     queryParams['format'] = 'json';
@@ -37,7 +41,6 @@ class PinboardAPI {
     try {
       final postsRes = await http.get(postsUrl);
       if (postsRes.statusCode == 200) {
-        print(postsRes.body);
         final result = json.jsonDecode(postsRes.body);
         if (result['result_code'] == 'done') {
           return 0;

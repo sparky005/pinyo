@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinyo/src/edit_bloc.dart';
+import 'package:pinyo/src/widgets/progressbar.dart';
 
 class EditPage extends StatelessWidget {
   @override
@@ -8,6 +9,10 @@ class EditPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Post"),
+        bottom: PreferredSize(
+          preferredSize: Size(double.infinity, 1.0),
+          child: ProgressBar(bloc.isLoading),
+        ),
       ),
       body: ListView(
         children: <Widget>[
@@ -104,7 +109,32 @@ class EditPage extends StatelessWidget {
         return RaisedButton(
           child: Text('Submit'),
           color: Colors.blue,
-          onPressed: snapshot.hasData ? bloc.submit : null,
+          // TODO: need to validate that the right data is there
+          // and show a message on success or fail
+          onPressed: () async {
+            if (snapshot.hasData) {
+              final rc = await bloc.submit();
+              var message;
+              if (rc == 0) {
+                message = 'Success!';
+              } else if (rc == 2) {
+                message = 'Invalid Url!';
+              } else {
+                message = 'Error!';
+              }
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                ),
+              );
+            } else {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Error: URL and title required"),
+                ),
+              );
+            }
+          },
         );
       },
     );

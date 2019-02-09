@@ -12,10 +12,13 @@ class EditBloc {
   final _descriptionSubject = BehaviorSubject<String>();
 
   Stream<String> get extended => _extendedSubject.stream;
-  final _extendedSubject = BehaviorSubject<String>();
+  final _extendedSubject = BehaviorSubject<String>(seedValue: "");
 
   Stream<String> get tags => _tagsSubject.stream;
   final _tagsSubject = BehaviorSubject<String>(seedValue: "");
+
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
+  final _isLoadingSubject = BehaviorSubject<bool>(seedValue: false);
 
   Stream<bool> get submitValid =>
       Observable.combineLatest4(url, description, extended, tags, (url, description, extended, tags) => true);
@@ -31,9 +34,11 @@ class EditBloc {
     _descriptionSubject.close();
     _extendedSubject.close();
     _tagsSubject.close();
+    _isLoadingSubject.close();
   }
 
-  submit() {
+  Future<int> submit() async {
+    _isLoadingSubject.add(true);
     final url = _urlSubject.value;
     final description = _descriptionSubject.value;
     final extended = _extendedSubject.value;
@@ -44,11 +49,8 @@ class EditBloc {
       ..extended = extended
       ..tags = tags
     );
-    print("URL: $url");
-    print("Description: $description");
-    print("Extended: $extended");
-    print("Tags: $tags");
-    print(post.toString());
-    //PinboardAPI.api.addPost(token, post);
+    final rc = await PinboardAPI.api.addPost(token, post);
+    _isLoadingSubject.add(false);
+    return rc;
   }
 }
